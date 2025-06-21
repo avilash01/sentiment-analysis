@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('✅ Sentiment Analyzer API is running.');
+  res.send('Sentiment Analyzer API is running.');
 });
 
 app.post('/analyze-sentiment', (req, res) => {
@@ -33,5 +33,5 @@ app.post('/analyze-sentiment', (req, res) => {
 
 const PORT = 8000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running at http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
