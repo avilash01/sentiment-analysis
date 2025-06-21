@@ -1,124 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentiment Analyzer</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-        }
-        .container {
-            max-width: 600px;
-        }
-        textarea {
-            resize: vertical;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sentiment Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+    }
+    .container {
+      max-width: 600px;
+    }
+    textarea {
+      resize: vertical;
+    }
+  </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
-    <div class="container bg-white p-8 rounded-lg shadow-xl border border-gray-200">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Sentiment Analyzer</h1>
+  <div class="container bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Sentiment Analyzer</h1>
 
-        <div class="mb-6">
-            <label for="textInput" class="block text-gray-700 text-sm font-semibold mb-2">Enter your text:</label>
-            <textarea id="textInput" rows="6"
-                      class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
-                      placeholder=""></textarea>
-        </div>
-
-        <div class="flex justify-center mb-6">
-            <button id="analyzeButton"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
-                Analyze Sentiment
-            </button>
-        </div>
-
-        <div id="loadingIndicator" class="hidden text-center text-blue-600 font-semibold mb-4">
-            Analyzing sentiment...
-        </div>
-
-        <div id="resultContainer" class="hidden p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-800 mb-3">Analysis Result:</h2>
-            <p class="text-gray-700 mb-2">
-                <span class="font-bold">Sentiment:</span> <span id="sentimentResult" class="font-bold text-lg"></span>
-            </p>
-            <p class="text-gray-600">
-                <span class="font-bold">Explanation:</span> <span id="explanationResult"></span>
-            </p>
-        </div>
-
-        <div id="errorContainer" class="hidden p-4 bg-red-100 rounded-lg border border-red-400 text-red-700">
-            <p id="errorMessage" class="font-bold"></p>
-        </div>
+    <div class="mb-6">
+      <label for="textInput" class="block text-gray-700 text-sm font-semibold mb-2">Enter your text:</label>
+      <textarea
+        id="textInput"
+        rows="6"
+        class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+        placeholder="Type something to analyze sentiment..."></textarea>
     </div>
 
-    <script>
-        const textInput = document.getElementById('textInput');
-        const analyzeButton = document.getElementById('analyzeButton');
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const resultContainer = document.getElementById('resultContainer');
-        const sentimentResult = document.getElementById('sentimentResult');
-        const explanationResult = document.getElementById('explanationResult');
-        const errorContainer = document.getElementById('errorContainer');
-        const errorMessage = document.getElementById('errorMessage');
+    <div class="flex justify-center mb-6">
+      <button
+        id="analyzeButton"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+        Analyze Sentiment
+      </button>
+    </div>
 
-        const API_URL = 'http://localhost:8000/analyze-sentiment';
+    <div id="loadingIndicator" class="hidden text-center text-blue-600 font-semibold mb-4">
+      Analyzing sentiment...
+    </div>
 
-        analyzeButton.addEventListener('click', async () => {
-            const text = textInput.value.trim();
+    <div id="resultContainer" class="hidden p-4 bg-gray-50 rounded-lg border border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-800 mb-3">Analysis Result:</h2>
+      <p class="text-gray-700 mb-2">
+        <span class="font-bold">Sentiment:</span>
+        <span id="sentimentResult" class="font-bold text-lg"></span>
+      </p>
+      <p class="text-gray-600">
+        <span class="font-bold">Explanation:</span>
+        <span id="explanationResult"></span>
+      </p>
+    </div>
 
-            resultContainer.classList.add('hidden');
-            errorContainer.classList.add('hidden');
-            loadingIndicator.classList.remove('hidden');
-            errorMessage.textContent = '';
+    <div id="errorContainer" class="hidden p-4 bg-red-100 rounded-lg border border-red-400 text-red-700">
+      <p id="errorMessage" class="font-bold"></p>
+    </div>
+  </div>
 
-            if (!text) {
-                loadingIndicator.classList.add('hidden');
-                errorContainer.classList.remove('hidden');
-                errorMessage.textContent = 'Please enter some text to analyze.';
-                return;
-            }
+  <script>
+    const textInput = document.getElementById('textInput');
+    const analyzeButton = document.getElementById('analyzeButton');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const resultContainer = document.getElementById('resultContainer');
+    const sentimentResult = document.getElementById('sentimentResult');
+    const explanationResult = document.getElementById('explanationResult');
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text }),
-                });
+    const API_URL = 'http://localhost:8000/analyze-sentiment';
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: `HTTP error! Status: ${response.status}` }));
-                    throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
-                }
+    analyzeButton.addEventListener('click', async () => {
+      const text = textInput.value.trim();
 
-                const data = await response.json();
-                sentimentResult.textContent = data.sentiment;
-                explanationResult.textContent = data.explanation;
+      resultContainer.classList.add('hidden');
+      errorContainer.classList.add('hidden');
+      loadingIndicator.classList.remove('hidden');
+      errorMessage.textContent = '';
 
-                sentimentResult.classList.remove('text-green-600', 'text-red-600', 'text-gray-600');
-                if (data.sentiment === 'Positive') {
-                    sentimentResult.classList.add('text-green-600');
-                } else if (data.sentiment === 'Negative') {
-                    sentimentResult.classList.add('text-red-600');
-                } else {
-                    sentimentResult.classList.add('text-gray-600');
-                }
+      if (!text) {
+        loadingIndicator.classList.add('hidden');
+        errorContainer.classList.remove('hidden');
+        errorMessage.textContent = 'Please enter some text to analyze.';
+        return;
+      }
 
-                resultContainer.classList.remove('hidden');
-            } catch (error) {
-                console.error('Error analyzing sentiment:', error);
-                errorMessage.textContent = `Error: ${error.message}.backend is running at ${AIzaSyASxOx3j9k987NBfR1n8eD4TXKEXHIjLpQ}`;
-                errorContainer.classList.remove('hidden');
-            } finally {
-                loadingIndicator.classList.add('hidden');
-            }
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
         });
-    </script>
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({
+            error: `HTTP error! Status: ${response.status}`,
+          }));
+          throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        sentimentResult.textContent = data.sentiment;
+        explanationResult.textContent = data.explanation;
+
+        sentimentResult.classList.remove('text-green-600', 'text-red-600', 'text-gray-600');
+        if (data.sentiment === 'Positive') {
+          sentimentResult.classList.add('text-green-600');
+        } else if (data.sentiment === 'Negative') {
+          sentimentResult.classList.add('text-red-600');
+        } else {
+          sentimentResult.classList.add('text-gray-600');
+        }
+
+        resultContainer.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error analyzing sentiment:', error);
+        errorMessage.textContent = `Error: ${error.message}. Please ensure the backend is running.`;
+        errorContainer.classList.remove('hidden');
+      } finally {
+        loadingIndicator.classList.add('hidden');
+      }
+    });
+  </script>
 </body>
 </html>
